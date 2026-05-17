@@ -1,5 +1,6 @@
 from collections.abc import AsyncGenerator
 from functools import lru_cache
+import os
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,5 +32,7 @@ def get_gemma_engine() -> GemmaEngine:
 
 
 @lru_cache
-def get_vector_store() -> VectorStore:
+def get_vector_store() -> VectorStore | None:
+    if os.getenv("HF_SPACE_LIGHT_MODE", "").lower() == "true":
+        return None
     return VectorStore()

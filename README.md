@@ -212,10 +212,13 @@ The Space listens on port `7860`.
 Recommended Space settings:
 
 ```env
+HF_SPACE_LIGHT_MODE=true
 OLLAMA_MODEL=gemma4:e2b
 ```
 
-For stronger always-on inference, use an external Ollama/Ollama Cloud endpoint:
+The default Space build uses a lightweight public-demo mode so Hugging Face does not need to download and run Ollama/Gemma inside the container. PDF upload, parsing, database-backed retrieval, graph exploration, and deterministic fallbacks remain available.
+
+For Gemma-backed generation, use an external Ollama/Ollama Cloud endpoint:
 
 ```env
 USE_EXTERNAL_OLLAMA=true
@@ -223,7 +226,7 @@ OLLAMA_HOST=<your-ollama-endpoint>
 OLLAMA_MODEL=<model-tag>
 ```
 
-If local Ollama is used inside the Space, enable persistent storage so the model does not need to be downloaded again after every restart.
+Running local Ollama directly inside a Space requires paid hardware and persistent storage; otherwise model download and startup can exceed Space limits.
 
 ## Local Development
 

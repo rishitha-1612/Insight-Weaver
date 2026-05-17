@@ -11,17 +11,16 @@ RUN npm ci
 COPY frontend/ ./
 RUN npm run build
 
-FROM ollama/ollama:latest AS ollama-bin
-
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PORT=7860 \
+    HF_SPACE_LIGHT_MODE=true \
+    USE_EXTERNAL_OLLAMA=false \
     OLLAMA_MODEL=gemma4:e2b \
     OLLAMA_HOST=http://127.0.0.1:11434 \
-    OLLAMA_MODELS=/data/ollama/models \
     GEMMA_REASONING_MODEL=gemma4:e2b \
     GEMMA_LIGHT_MODEL=gemma4:e2b \
     POSTGRES_DSN=sqlite+aiosqlite:////data/scidb.db \
@@ -36,12 +35,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential curl git libpq-dev nginx ca-certificates bash \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=ollama-bin /bin/ollama /usr/local/bin/ollama
-
-COPY backend/requirements.txt /app/backend/requirements.txt
+COPY backend/requirements-space.txt /app/backend/requirements-space.txt
 RUN pip install --upgrade pip \
-    && pip install -r /app/backend/requirements.txt \
-    && pip install aiosqlite==0.20.0
+    && pip install -r /app/backend/requirements-space.txt
 
 COPY backend/ /app/backend/
 COPY --from=frontend-build /frontend/dist /app/frontend/dist
@@ -49,7 +45,7 @@ COPY hf/nginx.conf /etc/nginx/nginx.conf
 COPY hf/start-space.sh /app/start-space.sh
 
 RUN chmod +x /app/start-space.sh \
-    && mkdir -p /data/uploads /data/chroma_db /data/ollama/models /run/nginx
+    && mkdir -p /data/uploads /data/chroma_db /run/nginx
 
 EXPOSE 7860
 

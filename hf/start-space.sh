@@ -8,32 +8,14 @@ export GEMMA_LIGHT_MODEL="${GEMMA_LIGHT_MODEL:-$OLLAMA_MODEL}"
 export POSTGRES_DSN="${POSTGRES_DSN:-sqlite+aiosqlite:////data/scidb.db}"
 export CHROMA_PATH="${CHROMA_PATH:-/data/chroma_db}"
 export UPLOADS_DIR="${UPLOADS_DIR:-/data/uploads}"
-export OLLAMA_MODELS="${OLLAMA_MODELS:-/data/ollama/models}"
 
-mkdir -p /data/uploads /data/chroma_db "$OLLAMA_MODELS"
+mkdir -p /data/uploads /data/chroma_db
 
 if [[ "${USE_EXTERNAL_OLLAMA:-false}" == "true" ]]; then
   echo "Using external Ollama host: ${OLLAMA_HOST}"
 else
-  export OLLAMA_HOST="${OLLAMA_HOST:-http://127.0.0.1:11434}"
-  echo "Starting local Ollama on ${OLLAMA_HOST} with model ${OLLAMA_MODEL}"
-  ollama serve &
-  OLLAMA_PID="$!"
-
-  for attempt in $(seq 1 60); do
-    if ollama list >/dev/null 2>&1; then
-      break
-    fi
-    echo "Waiting for Ollama to start... (${attempt}/60)"
-    sleep 2
-  done
-
-  if ! ollama list | awk '{print $1}' | grep -qx "${OLLAMA_MODEL}"; then
-    echo "Pulling ${OLLAMA_MODEL}. This may take several minutes on first Space startup."
-    ollama pull "${OLLAMA_MODEL}"
-  else
-    echo "${OLLAMA_MODEL} already available."
-  fi
+  echo "HF Space light mode: local Ollama is disabled to avoid startup timeouts."
+  echo "Set USE_EXTERNAL_OLLAMA=true and OLLAMA_HOST to enable Gemma-backed generation."
 fi
 
 echo "Starting FastAPI backend"
@@ -45,8 +27,4 @@ echo "Starting Nginx frontend on port ${PORT}"
 nginx -g "daemon off;" &
 NGINX_PID="$!"
 
-if [[ -n "${OLLAMA_PID:-}" ]]; then
-  wait -n "$BACKEND_PID" "$NGINX_PID" "$OLLAMA_PID"
-else
-  wait -n "$BACKEND_PID" "$NGINX_PID"
-fi
+wait -n "$BACKEND_PID" "$NGINX_PID"

@@ -22,18 +22,22 @@ This Space uses the root `Dockerfile`, which packages:
 - React frontend
 - FastAPI backend
 - Nginx proxy
-- optional local Ollama runtime
 
-Default Space model:
+Default public-demo mode:
 
 ```env
+HF_SPACE_LIGHT_MODE=true
 OLLAMA_MODEL=gemma4:e2b
 ```
 
-For better performance, use paid CPU/GPU hardware with persistent storage enabled, or set:
+In this mode, the Space does not download local Ollama/Gemma during startup. This avoids restart timeouts on basic Hugging Face hardware.
+
+For Gemma-backed inference, set:
 
 ```env
 USE_EXTERNAL_OLLAMA=true
 OLLAMA_HOST=<your_ollama_or_ollama_cloud_endpoint>
 OLLAMA_MODEL=<model_tag>
 ```
+
+Running Ollama inside the Space requires stronger paid hardware and persistent storage.
