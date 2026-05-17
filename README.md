@@ -1,3 +1,11 @@
+---
+title: Insight Weaver
+sdk: docker
+app_port: 7860
+pinned: false
+license: mit
+---
+
 # Insight Weaver
 
 > A Gemma-powered scientific discovery copilot that turns dense research papers into searchable evidence, knowledge graphs, contradiction maps, and testable hypotheses.
@@ -187,6 +195,33 @@ Copy the generated `trycloudflare.com` URL from the logs. The link remains activ
 
 For a production-grade public URL, use a named Cloudflare Tunnel or deploy the same Docker stack to a VPS or cloud VM.
 
+## Hugging Face Spaces Deployment
+
+The repository also includes a root `Dockerfile` for Hugging Face Spaces. Unlike local Docker Compose, Spaces run a single container, so this image bundles:
+
+- React frontend
+- FastAPI backend
+- Nginx reverse proxy
+- optional local Ollama runtime
+
+The Space listens on port `7860`.
+
+Recommended Space settings:
+
+```env
+OLLAMA_MODEL=gemma4:e2b
+```
+
+For stronger always-on inference, use an external Ollama/Ollama Cloud endpoint:
+
+```env
+USE_EXTERNAL_OLLAMA=true
+OLLAMA_HOST=<your-ollama-endpoint>
+OLLAMA_MODEL=<model-tag>
+```
+
+If local Ollama is used inside the Space, enable persistent storage so the model does not need to be downloaded again after every restart.
+
 ## Local Development
 
 Backend:
@@ -275,4 +310,3 @@ This project has been containerized with:
 Insight Weaver compresses the early research cycle from days into minutes. It helps a researcher move from "I have papers" to "I understand the evidence, conflicts, graph structure, and next experiments." That is the difference between search and discovery.
 
 Built for the Kaggle Gemma hackathon, but designed like a real research product.
-
