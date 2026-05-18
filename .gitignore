@@ -24,6 +24,7 @@ backend/uploads/
 backend/data/
 backend/*.db
 backend/local-uvicorn.pid
+ops/*.log
 *.sqlite
 *.sqlite3
 
