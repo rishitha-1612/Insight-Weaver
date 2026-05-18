@@ -1526,14 +1526,15 @@ function App() {
     }
   }, [user]);
 
-  const navigationItems = [
-    { id: "upload", label: "Workspace", icon: Upload, ariaLabel: "Open workspace tools" },
-    { id: "graphrag", label: "GraphRAG", icon: Search, ariaLabel: "Open GraphRAG search" },
-    { id: "hypothesis", label: "Hypotheses", icon: FlaskConical, ariaLabel: "Open hypothesis generation" },
-    { id: "analysis", label: "Cross-Paper Analysis", icon: Activity, emphasized: true, ariaLabel: "Open cross-paper analysis" },
-    { id: "library", label: "Library", icon: Database, ariaLabel: "Open library" },
-    { id: "graph", label: "Knowledge Graph", icon: Network, ariaLabel: "Open knowledge graph" },
-    { id: "studio", label: "Discovery", icon: Sparkles, ariaLabel: "Open discovery workspace" }
+  const tabs = [
+    ["upload", "Workspace", Upload],
+    ["graphrag", "GraphRAG", Search],
+    ["chat", "RAG Chat", MessageCircle],
+    ["hypothesis", "Hypotheses", FlaskConical],
+    ["analysis", "Cross-Paper Analysis", Activity],
+    ["library", "Library", Database],
+    ["graph", "Knowledge Graph", Network],
+    ["studio", "Discovery", Sparkles]
   ];
 
   if (showIntro) return <InsightWeaverIntro onComplete={() => setShowIntro(false)} />;
@@ -1559,10 +1560,10 @@ function App() {
           {active === "upload" && <UploadPanel api={api} refreshPapers={refreshPapers} />}
           {active === "library" && <LibraryPanel papers={papers} refreshPapers={refreshPapers} api={api} />}
           {active === "graphrag" && <GraphRagPanel api={api} papers={papers} setLastResult={setLastResult} />}
+          {active === "chat" && <RagChatPanel api={api} papers={papers} setLastResult={setLastResult} />}
           {active === "hypothesis" && <HypothesisPanel api={api} papers={papers} />}
           {active === "studio" && <DiscoveryPanel lastResult={lastResult} />}
           {active === "graph" && <KnowledgeGraphPanel api={api} papers={papers} />}
-          {active === "hypothesis" && <HypothesisPanel api={api} papers={papers} />}
           {active === "analysis" && <AnalysisPanel api={api} papers={papers} />}
         </div>
       </main>
