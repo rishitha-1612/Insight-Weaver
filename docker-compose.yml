@@ -85,6 +85,16 @@ services:
     command: tunnel --no-autoupdate --protocol http2 --url http://frontend:80
     restart: unless-stopped
 
+  named-tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: gemma-hackathon-named-tunnel
+    profiles: ["named-tunnel"]
+    depends_on:
+      frontend:
+        condition: service_healthy
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TOKEN}
+    restart: unless-stopped
+
 volumes:
   ollama-models:
   backend-data:
